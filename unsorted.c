@@ -48,7 +48,6 @@ void destroySet(SET *sp) {
     for (; i < sp->count; i++)
         free(sp->data[i]);
     free(sp->data);
-    free(sp);
 }
 
 /**
@@ -73,7 +72,6 @@ int numElements(SET *sp) {
 void addElement(SET *sp, char *elt) {
     assert(sp != NULL);
     if (!(sp->count >= sp->size || findElement(sp, elt) != NULL)) {
-        free(sp->data[sp->count]);
         sp->data[sp->count] = strdup(elt);
         sp->count++;
     }
@@ -81,22 +79,19 @@ void addElement(SET *sp, char *elt) {
 
 /**
  * This method removes an element from the give set.
+ * Will silently fail if the element does not exist in the set.
  *
  * @param sp the set to remove the element from
  * @param elt the element to remove
  * @timeComplexity O(N)
  */
- //TODO fix this to make it O(1)
 void removeElement(SET *sp, char *elt) {
     assert(sp != NULL);
     int i = 0;
     for (; i < sp->count; i++) {
         if (strcmp(sp->data[i], elt) == 0) {
             free(sp->data[i]);
-            int j = i;
-            for (; j < sp->count - 1; j++) {
-                sp->data[j] = sp->data[j + 1];
-            }
+            sp->data[i] = sp->data[sp->count];
             sp->count--;
             return;
         }

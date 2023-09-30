@@ -16,7 +16,7 @@
 #include <stdbool.h>
 
 typedef struct set {
-    char **data;
+    char** data;
     unsigned int count;         // Number of elements that contain data
     unsigned int size;   // How much space is allocated to the array
 } sortedSet;
@@ -28,11 +28,13 @@ typedef struct set {
  * @return the newly allocated set
  * @timeComplexity O(n)
  */
-SET *createSet(int maxElts) { // maxElts should be unsigned but the header file has this variable signed
-    sortedSet *a = malloc(sizeof(sortedSet));
+SET* createSet(int maxElts) { // maxElts should be unsigned but the header file has this variable signed
+    sortedSet* a = malloc(sizeof(sortedSet));
+    assert(a != NULL);
     a->count = 0;
     a->size = maxElts;
-    a->data = malloc(maxElts * sizeof(char *));
+    a->data = malloc(maxElts * sizeof(char*));
+    assert(a->data != NULL);
     return a;
 }
 
@@ -42,13 +44,12 @@ SET *createSet(int maxElts) { // maxElts should be unsigned but the header file 
  * @param sp the set to destroy
  * @timeComplexity O(N)
  */
-void destroySet(SET *sp) {
+void destroySet(SET* sp) {
     assert(sp != NULL);
     int i = 0;
     for (; i < sp->count; i++)
         free(sp->data[i]);
     free(sp->data);
-    free(sp);
 }
 
 /**
@@ -58,7 +59,7 @@ void destroySet(SET *sp) {
  * @return the number of unique elements
  * @timeComplexity O(1)
  */
-int numElements(SET *sp) {
+int numElements(SET* sp) {
     assert(sp != NULL);
     return sp->count;
 }
@@ -66,33 +67,44 @@ int numElements(SET *sp) {
 /**
  * Finds the index of an element in the set.
  * Returns -1 if the element does not exist within the set.
+ * Pass a boolean pointer as found if you want found variable returned as a boolean.
  *
  * @precondition Set is sorted.
  * @param sp the set to search through
  * @param elt the element to search for
- * @return the index where the element is or should be added
+ * @return the index where the element is or should be added and also found kinda
  * @timeComplexity O(log(n))
  */
-static unsigned int findElementIndex(SET *sp, char *elt, bool *found) {
+static unsigned int findElementIndex(SET* sp, char* elt, bool* found) {
     assert(sp != NULL);
-    if (sp->count == 0)
+    if (sp->count == 0) {
+        if (found != NULL)
+            *found = false;
         return 0;
-    unsigned int low = 0;
-    unsigned int high = sp->count - 1;
-    unsigned int mid = (low + high) / 2;
+    }
+    signed int low = 0;
+    signed int high = sp->count - 1;
+    signed int mid = (low + high) / 2;
     while (low <= high) {
         int comparison = strcmp(elt, sp->data[mid]);
-        if (comparison < 0)
+        if (comparison < 0) {
+            if (mid == 0) {
+                if (found != NULL)
+                    *found = false;
+                return mid;
+            }
             high = mid - 1;
-        else if (comparison > 0)
+        } else if (comparison > 0)
             low = mid + 1;
         else {
+            if (found != NULL)
+                *found = true;
             return mid;
-            found = (bool *) true;
         }
         mid = (low + high) / 2;
     }
-    found = false;
+    if (found != NULL)
+        *found = false;
     return mid + 1;
 }
 
@@ -104,11 +116,14 @@ static unsigned int findElementIndex(SET *sp, char *elt, bool *found) {
  * @param elt the element to add.
  * @timeComplexity O(Nlog(N))
  */
-void addElement(SET *sp, char *elt) {
+void addElement(SET* sp, char* elt) {
     assert(sp != NULL);
     assert(sp->count < sp->size);
-    bool a;
-    unsigned int indexOfElement = findElementIndex(sp, elt, &a);
+    bool elementAlreadyExists = false;
+    unsigned int indexOfElement = findElementIndex(sp, elt, &elementAlreadyExists);
+    if (elementAlreadyExists) {
+        return;
+    }
     unsigned int i = sp->count;
     for (; i > indexOfElement; i--) {
         sp->data[i] = sp->data[i - 1];
@@ -127,14 +142,15 @@ void addElement(SET *sp, char *elt) {
  * @param elt the element to remove
  * @timeComplexity O(N)
  */
-void removeElement(SET *sp, char *elt) {
-    assert(sp != NULL);
-    unsigned int i = findElementIndex(sp, elt);
+void removeElement(SET* sp, char* elt) {
+    unsigned int i = findElementIndex(sp, elt, NULL);
     if (strcmp(sp->data[i], elt) != 0)
         return;
     free(sp->data[i]);
-    for (; i < sp->count - 1; i++)
+    sp->data[i] = NULL;
+    for (; i < sp->count - 1; i++) {
         sp->data[i] = sp->data[i + 1];
+    }
     sp->count--;
 }
 
@@ -150,7 +166,7 @@ void removeElement(SET *sp, char *elt) {
  * otherwise NULL
  * @timeComplexity O(log(N))
  */
-char *findElement(SET *sp, char *elt) {
+char* findElement(SET* sp, char* elt) {
     assert(sp != NULL);
     unsigned int indexOfElement = findElementIndex(sp, elt, NULL);
     if (strcmp(sp->data[indexOfElement], elt) == 0)
@@ -169,9 +185,10 @@ char *findElement(SET *sp, char *elt) {
  * @return A new array of strings
  * @timeComplexity O(N)
  */
-char **getElements(SET *sp) {
+char** getElements(SET* sp) {
     assert(sp != NULL);
-    char **toReturn = malloc(sp->count * sizeof(char *));
+    char** toReturn = malloc(sp->count * sizeof(char*));
+    assert(toReturn != NULL);
     int i = 0;
     for (; i < sp->count; i++) {
         toReturn[i] = strdup(sp->data[i]);
