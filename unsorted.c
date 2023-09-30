@@ -91,7 +91,7 @@ void removeElement(SET *sp, char *elt) {
     for (; i < sp->count; i++) {
         if (strcmp(sp->data[i], elt) == 0) {
             free(sp->data[i]);
-            sp->data[i] = sp->data[sp->count];
+            sp->data[i] = sp->data[sp->count-1];
             sp->count--;
             return;
         }

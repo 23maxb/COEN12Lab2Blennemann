@@ -15,11 +15,9 @@ int main(int argc, char* argv[]) {
     addElement(&a, "d");
     addElement(&a, "a");
     addElement(&a, "b");
-    addElement(&a, "a");
-    addElement(&a, "b");
-    addElement(&a, "a");
-    addElement(&a, "b");
-    addElement(&a, "a");
+    removeElement(&a, "d");
+    removeElement(&a, "a");
+    printf("%i", numElements(&a));
     printf("\n\n\n");
     for (int i = 0; i < a.count; i++)
         printf("%s\n", a.data[i]);
