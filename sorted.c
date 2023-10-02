@@ -77,6 +77,7 @@ int numElements(SET* sp) {
  */
 static unsigned int findElementIndex(SET* sp, char* elt, bool* found) {
     assert(sp != NULL);
+    assert(elt != NULL);
     if (sp->count == 0) {
         if (found != NULL)
             *found = false;
@@ -118,6 +119,7 @@ static unsigned int findElementIndex(SET* sp, char* elt, bool* found) {
  */
 void addElement(SET* sp, char* elt) {
     assert(sp != NULL);
+    assert(elt != NULL);
     assert(sp->count < sp->size);
     bool elementAlreadyExists = false;
     unsigned int indexOfElement = findElementIndex(sp, elt, &elementAlreadyExists);
@@ -143,15 +145,18 @@ void addElement(SET* sp, char* elt) {
  * @timeComplexity O(N)
  */
 void removeElement(SET* sp, char* elt) {
-    unsigned int i = findElementIndex(sp, elt, NULL);
-    if (strcmp(sp->data[i], elt) != 0)
-        return;
-    free(sp->data[i]);
-    sp->data[i] = NULL;
-    for (; i < sp->count - 1; i++) {
-        sp->data[i] = sp->data[i + 1];
+    assert(sp != NULL);
+    if (elt != NULL) {
+        unsigned int i = findElementIndex(sp, elt, NULL);
+        if (strcmp(sp->data[i], elt) != 0)
+            return;
+        free(sp->data[i]);
+        sp->data[i] = NULL;
+        for (; i < sp->count - 1; i++) {
+            sp->data[i] = sp->data[i + 1];
+        }
+        sp->count--;
     }
-    sp->count--;
 }
 
 
@@ -168,6 +173,8 @@ void removeElement(SET* sp, char* elt) {
  */
 char* findElement(SET* sp, char* elt) {
     assert(sp != NULL);
+    if(elt == NULL)
+        return NULL;
     unsigned int indexOfElement = findElementIndex(sp, elt, NULL);
     if (strcmp(sp->data[indexOfElement], elt) == 0)
         return NULL;

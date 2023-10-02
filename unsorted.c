@@ -16,7 +16,7 @@
 #include <string.h>
 
 typedef struct set {
-    char **data;
+    char** data;
     unsigned int count;         // Number of elements that contain data
     unsigned int size;   // How much space is allocated to the array
 } unsortedSet;
@@ -28,11 +28,11 @@ typedef struct set {
  * @return the newly allocated set
  * @timeComplexity O(N)
  */
-SET *createSet(int maxElts) {
-    unsortedSet *a = malloc(sizeof(unsortedSet));
+SET* createSet(int maxElts) {
+    unsortedSet* a = malloc(sizeof(unsortedSet));
     a->count = 0;
     a->size = maxElts;
-    a->data = malloc(maxElts * sizeof(char *));
+    a->data = malloc(maxElts * sizeof(char*));
     return a;
 }
 
@@ -42,7 +42,7 @@ SET *createSet(int maxElts) {
  * @param sp the set to destroy
  * @timeComplexity O(N)
  */
-void destroySet(SET *sp) {
+void destroySet(SET* sp) {
     assert(sp != NULL);
     int i = 0;
     for (; i < sp->count; i++)
@@ -57,7 +57,7 @@ void destroySet(SET *sp) {
  * @return the number of unique elements
  * @timeComplexity O(1)
  */
-int numElements(SET *sp) {
+int numElements(SET* sp) {
     assert(sp != NULL);
     return sp->count;
 }
@@ -69,8 +69,9 @@ int numElements(SET *sp) {
  * @param elt the element to add.
  * @timeComplexity O(N)
  */
-void addElement(SET *sp, char *elt) {
+void addElement(SET* sp, char* elt) {
     assert(sp != NULL);
+    assert(elt != NULL);
     if (!(sp->count >= sp->size || findElement(sp, elt) != NULL)) {
         sp->data[sp->count] = strdup(elt);
         sp->count++;
@@ -79,21 +80,23 @@ void addElement(SET *sp, char *elt) {
 
 /**
  * This method removes an element from the give set.
- * Will silently fail if the element does not exist in the set.
+ * Will silently fail if the element does not exist in the set or the element given is NULL.
  *
  * @param sp the set to remove the element from
  * @param elt the element to remove
  * @timeComplexity O(N)
  */
-void removeElement(SET *sp, char *elt) {
+void removeElement(SET* sp, char* elt) {
     assert(sp != NULL);
-    int i = 0;
-    for (; i < sp->count; i++) {
-        if (strcmp(sp->data[i], elt) == 0) {
-            free(sp->data[i]);
-            sp->data[i] = sp->data[sp->count-1];
-            sp->count--;
-            return;
+    if (elt != NULL) {
+        int i = 0;
+        for (; i < sp->count; i++) {
+            if (strcmp(sp->data[i], elt) == 0) {
+                free(sp->data[i]);
+                sp->data[i] = sp->data[sp->count - 1];
+                sp->count--;
+                return;
+            }
         }
     }
 }
@@ -107,8 +110,10 @@ void removeElement(SET *sp, char *elt) {
  * @return a pointer to the element if it exists, otherwise NULL
  * @timeComplexity O(N)
  */
-char *findElement(SET *sp, char *elt) {
+char* findElement(SET* sp, char* elt) {
     assert(sp != NULL);
+    if(elt == NULL)
+        return NULL;
     int i = 0;
     for (; i < sp->count; i++) {
         if (strcmp(sp->data[i], elt) == 0) {
@@ -128,9 +133,9 @@ char *findElement(SET *sp, char *elt) {
  * @return A new array of strings
  * @timeComplexity O(N)
  */
-char **getElements(SET *sp) {
+char** getElements(SET* sp) {
     assert(sp != NULL);
-    char **toReturn = malloc(sp->count * sizeof(char *));
+    char** toReturn = malloc(sp->count * sizeof(char*));
     int i = 0;
     for (; i < sp->count; i++) {
         toReturn[i] = strdup(sp->data[i]);

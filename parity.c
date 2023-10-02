@@ -29,11 +29,10 @@
  * Description: Driver function for the test application.
  */
 
-int main(int argc, char *argv[])
-{
-    FILE *fp;
+int main(int argc, char* argv[]) {
+    FILE* fp;
     char buffer[BUFSIZ];
-    SET *odd;
+    SET* odd;
     int words;
 
 
@@ -56,7 +55,7 @@ int main(int argc, char *argv[])
     odd = createSet(MAX_SIZE);
 
     while (fscanf(fp, "%s", buffer) == 1) {
-        words ++;
+        words++;
 
         if (findElement(odd, buffer))
             removeElement(odd, buffer);

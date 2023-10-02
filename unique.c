@@ -32,11 +32,10 @@
  * Description: Driver function for the test application.
  */
 
-int main(int argc, char *argv[])
-{
-    FILE *fp;
-    char buffer[BUFSIZ], **elts;
-    SET *unique;
+int main(int argc, char* argv[]) {
+    FILE* fp;
+    char buffer[BUFSIZ], ** elts;
+    SET* unique;
     int i, words;
     bool lflag = false;
 
@@ -44,11 +43,11 @@ int main(int argc, char *argv[])
     /* Check usage and open the first file. */
 
     if (argc > 1 && strcmp(argv[1], "-l") == 0) {
-	lflag = true;
-	argc --;
+        lflag = true;
+        argc--;
 
-	for (i = 1; i < argc; i ++)
-	    argv[i] = argv[i + 1];
+        for (i = 1; i < argc; i++)
+            argv[i] = argv[i + 1];
     }
 
     if (argc == 1 || argc > 3) {
@@ -68,15 +67,15 @@ int main(int argc, char *argv[])
     unique = createSet(MAX_SIZE);
 
     while (fscanf(fp, "%s", buffer) == 1) {
-        words ++;
+        words++;
         addElement(unique, buffer);
     }
 
     fclose(fp);
 
     if (!lflag) {
-	printf("%d total words\n", words);
-	printf("%d distinct words\n", numElements(unique));
+        printf("%d total words\n", words);
+        printf("%d distinct words\n", numElements(unique));
     }
 
 
@@ -94,22 +93,22 @@ int main(int argc, char *argv[])
         while (fscanf(fp, "%s", buffer) == 1)
             removeElement(unique, buffer);
 
-	fclose(fp);
+        fclose(fp);
 
-	if (!lflag)
-	    printf("%d remaining words\n", numElements(unique));
+        if (!lflag)
+            printf("%d remaining words\n", numElements(unique));
     }
 
 
     /* Print the list of words if desired. */
 
     if (lflag) {
-	elts = getElements(unique);
+        elts = getElements(unique);
 
-	for (i = 0; i < numElements(unique); i ++)
-	    printf("%s\n", elts[i]);
+        for (i = 0; i < numElements(unique); i++)
+            printf("%s\n", elts[i]);
 
-	free(elts);
+        free(elts);
     }
 
     destroySet(unique);
