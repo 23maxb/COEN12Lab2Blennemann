@@ -148,6 +148,8 @@ void removeElement(SET* sp, char* elt) {
     assert(sp != NULL);
     if (elt != NULL) {
         unsigned int i = findElementIndex(sp, elt, NULL);
+        if (i >= sp->count)
+            return;
         if (strcmp(sp->data[i], elt) != 0)
             return;
         free(sp->data[i]);
@@ -173,13 +175,16 @@ void removeElement(SET* sp, char* elt) {
  */
 char* findElement(SET* sp, char* elt) {
     assert(sp != NULL);
-    if(elt == NULL)
+    if (elt == NULL)
         return NULL;
-    unsigned int indexOfElement = findElementIndex(sp, elt, NULL);
+    bool found;
+    unsigned int indexOfElement = findElementIndex(sp, elt, &found);
+    if (!found)
+        return NULL;
     if (strcmp(sp->data[indexOfElement], elt) == 0)
-        return NULL;
-    else
         return sp->data[indexOfElement];
+    else
+        return NULL;
 }
 
 /**
